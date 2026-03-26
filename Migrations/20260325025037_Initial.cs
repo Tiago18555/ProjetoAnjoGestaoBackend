@@ -13,20 +13,6 @@ namespace ProjetoAnjoGestaoBackend.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Carros",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Modelo = table.Column<string>(type: "text", nullable: false),
-                    Placa = table.Column<string>(type: "text", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Carros", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Lojas",
                 columns: table => new
                 {
@@ -47,19 +33,14 @@ namespace ProjetoAnjoGestaoBackend.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     NomeCliente = table.Column<string>(type: "text", nullable: false),
                     Data = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    ValorTotal = table.Column<int>(type: "integer", nullable: false),
-                    LojaId = table.Column<int>(type: "integer", nullable: false),
-                    CarroId = table.Column<int>(type: "integer", nullable: false)
+                    ValorTotal = table.Column<decimal>(type: "numeric", nullable: false),
+                    ModeloCarro = table.Column<string>(type: "text", nullable: false),
+                    PlacaVeiculo = table.Column<string>(type: "text", nullable: false),
+                    LojaId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Servicos", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Servicos_Carros_CarroId",
-                        column: x => x.CarroId,
-                        principalTable: "Carros",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Servicos_Lojas_LojaId",
                         column: x => x.LojaId,
@@ -75,7 +56,7 @@ namespace ProjetoAnjoGestaoBackend.Migrations
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Nome = table.Column<string>(type: "text", nullable: false),
-                    Preco = table.Column<int>(type: "integer", nullable: false),
+                    Preco = table.Column<decimal>(type: "numeric", nullable: false),
                     ServicoId = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
@@ -87,11 +68,6 @@ namespace ProjetoAnjoGestaoBackend.Migrations
                         principalTable: "Servicos",
                         principalColumn: "Id");
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Servicos_CarroId",
-                table: "Servicos",
-                column: "CarroId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Servicos_LojaId",
@@ -112,9 +88,6 @@ namespace ProjetoAnjoGestaoBackend.Migrations
 
             migrationBuilder.DropTable(
                 name: "Servicos");
-
-            migrationBuilder.DropTable(
-                name: "Carros");
 
             migrationBuilder.DropTable(
                 name: "Lojas");

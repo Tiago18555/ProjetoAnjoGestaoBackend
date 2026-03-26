@@ -4,8 +4,6 @@ public static class DbSeeder
 {
     public static void Seed(AppDbContext db)
     {
-        db.Database.EnsureCreated();
-
         try
         {
             if (!db.Lojas.Any())

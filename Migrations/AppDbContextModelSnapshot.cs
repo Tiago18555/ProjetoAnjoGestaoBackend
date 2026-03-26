@@ -22,27 +22,6 @@ namespace ProjetoAnjoGestaoBackend.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("ProjetoAnjoGestaoBackend.Models.Carro", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Modelo")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Placa")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Carros");
-                });
-
             modelBuilder.Entity("ProjetoAnjoGestaoBackend.Models.Loja", b =>
                 {
                     b.Property<int>("Id")
@@ -68,25 +47,28 @@ namespace ProjetoAnjoGestaoBackend.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CarroId")
-                        .HasColumnType("integer");
-
                     b.Property<DateTime>("Data")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("LojaId")
                         .HasColumnType("integer");
 
+                    b.Property<string>("ModeloCarro")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("NomeCliente")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("ValorTotal")
-                        .HasColumnType("integer");
+                    b.Property<string>("PlacaVeiculo")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("ValorTotal")
+                        .HasColumnType("numeric");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CarroId");
 
                     b.HasIndex("LojaId");
 
@@ -105,8 +87,8 @@ namespace ProjetoAnjoGestaoBackend.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("Preco")
-                        .HasColumnType("integer");
+                    b.Property<decimal>("Preco")
+                        .HasColumnType("numeric");
 
                     b.Property<int?>("ServicoId")
                         .HasColumnType("integer");
@@ -120,19 +102,11 @@ namespace ProjetoAnjoGestaoBackend.Migrations
 
             modelBuilder.Entity("ProjetoAnjoGestaoBackend.Models.Servico", b =>
                 {
-                    b.HasOne("ProjetoAnjoGestaoBackend.Models.Carro", "Carro")
-                        .WithMany()
-                        .HasForeignKey("CarroId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("ProjetoAnjoGestaoBackend.Models.Loja", "Loja")
                         .WithMany()
                         .HasForeignKey("LojaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Carro");
 
                     b.Navigation("Loja");
                 });
@@ -140,13 +114,13 @@ namespace ProjetoAnjoGestaoBackend.Migrations
             modelBuilder.Entity("ProjetoAnjoGestaoBackend.Models.TipoDeServico", b =>
                 {
                     b.HasOne("ProjetoAnjoGestaoBackend.Models.Servico", null)
-                        .WithMany("Itens")
+                        .WithMany("ListaServicos")
                         .HasForeignKey("ServicoId");
                 });
 
             modelBuilder.Entity("ProjetoAnjoGestaoBackend.Models.Servico", b =>
                 {
-                    b.Navigation("Itens");
+                    b.Navigation("ListaServicos");
                 });
 #pragma warning restore 612, 618
         }

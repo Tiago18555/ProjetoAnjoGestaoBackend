@@ -6,6 +6,5 @@ public class AppDbContext : DbContext {
 
     public DbSet<Servico> Servicos => Set<Servico>();
     public DbSet<Loja> Lojas => Set<Loja>();
-    public DbSet<Carro> Carros => Set<Carro>();
     public DbSet<TipoDeServico> TiposDeServico => Set<TipoDeServico>();
 }

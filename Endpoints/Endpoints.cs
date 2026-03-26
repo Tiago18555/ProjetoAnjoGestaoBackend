@@ -22,21 +22,61 @@ public static class Endpoints {
             await db.TiposDeServico
                 .Select(ts => new TipoDeServicoDTO
                 (
+                    ts.Id,
                     ts.Nome,
                     ts.Preco
                 ))
                 .AsNoTracking()
-                .ToListAsync());     
+                .ToListAsync());
 
-        group.MapPost("/", async (ServicoDTO servico, AppDbContext db) =>
+        group.MapGet("/servicos", async (AppDbContext db) => 
+            await db.Servicos
+                .Include(s => s.Loja)
+                .Include(s => s.ListaServicos)
+                .Select(s => new ServicoResponseDTO
+                (
+                    s.Loja != null ? s.Loja.Nome : "Loja não informada",
+                    s.ModeloCarro,                                     
+                    s.PlacaVeiculo,                                    
+                    s.NomeCliente,                                     
+                    s.Data,                                            
+                    s.ListaServicos.Select(t => new TipoDeServicoDTO(  
+                        t.Id, 
+                        t.Nome, 
+                        t.Preco
+                    )).ToList(),
+                    s.ValorTotal
+                ))
+                .AsNoTracking()
+                .ToListAsync()); 
+
+     
+        group.MapPost("/", async (ServicoDTO dto, AppDbContext db) =>
         {
-            //ADICIONAR CARRO (UPSERT)
-            //ADICIONAR LOJA
+            var loja = await db.Lojas.FirstOrDefaultAsync(l => l.Nome == dto.NomeLoja) 
+                    ?? new Loja { Nome = dto.NomeLoja };
 
-            //db.TiposDeServico.Add(servico);
-            //await db.SaveChangesAsync();
+            var novosItens = dto.ListaServicos.Select(itemDto => new TipoDeServico
+            {
+                Nome = itemDto.Nome,
+                Preco = itemDto.Preco
+            }).ToList();
 
-            //return Results.Created($"/servicos/{servico.Id}", servico);
+            var novoServico = new Servico
+            {
+                NomeCliente = dto.NomeCliente,
+                ModeloCarro = dto.ModeloCarro,
+                PlacaVeiculo = dto.PlacaVeiculo,
+                ValorTotal = dto.ValorTotal,
+                Data = DateTime.UtcNow,
+                Loja = loja,
+                ListaServicos = novosItens
+            };
+
+            db.Servicos.Add(novoServico);
+            await db.SaveChangesAsync();
+
+            return Results.Created($"/servicos/{novoServico.Id}", novoServico);
         });
-    }
+    }    
 }
