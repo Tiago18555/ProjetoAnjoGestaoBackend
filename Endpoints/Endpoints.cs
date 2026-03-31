@@ -20,7 +20,7 @@ public static class Endpoints {
 
         group.MapGet("/tipodeservico", async (AppDbContext db) => 
             await db.TiposDeServico
-                .Select(ts => new TipoDeServicoDTO
+                .Select(ts => new TipoDeServicoResponseDTO
                 (
                     ts.Id,
                     ts.Nome,
@@ -40,7 +40,7 @@ public static class Endpoints {
                     s.PlacaVeiculo,                                    
                     s.NomeCliente,                                     
                     s.Data,                                            
-                    s.ListaServicos.Select(t => new TipoDeServicoDTO(  
+                    s.ListaServicos.Select(t => new TipoDeServicoResponseDTO(  
                         t.Id, 
                         t.Nome, 
                         t.Preco
@@ -49,6 +49,35 @@ public static class Endpoints {
                 ))
                 .AsNoTracking()
                 .ToListAsync()); 
+
+        group.MapPost("/lojas", async (LojaDTO dto, AppDbContext db) =>
+        {
+            var lojaExistente = await db.Lojas.AnyAsync(l => l.Nome == dto.Nome);
+            if (lojaExistente) return Results.Conflict("Esta loja já está cadastrada.");
+
+            var novaLoja = new Loja { Nome = dto.Nome };
+            
+            db.Lojas.Add(novaLoja);
+            await db.SaveChangesAsync();
+
+            return Results.Created($"/lojas/{novaLoja.Id}", dto);
+        });
+
+        group.MapPost("/tipodeservico", async (TipoDeServicoDTO dto, AppDbContext db) =>
+        {
+            var novoTipo = new TipoDeServico 
+            { 
+                Nome = dto.Nome, 
+                Preco = dto.Preco 
+            };
+
+            db.TiposDeServico.Add(novoTipo);
+            await db.SaveChangesAsync();
+
+            var response = new TipoDeServicoDTO(novoTipo.Nome, novoTipo.Preco);
+
+            return Results.Created($"/tipodeservico/{novoTipo.Id}", response);
+        });
 
      
         group.MapPost("/", async (ServicoDTO dto, AppDbContext db) =>

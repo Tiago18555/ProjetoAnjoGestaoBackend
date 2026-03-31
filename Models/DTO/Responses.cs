@@ -3,11 +3,11 @@ using System.Text.Json.Serialization;
 
 namespace ProjetoAnjoGestaoBackend.Models.DTO;
 
-public record LojaDTO(
+public record LojaResponseDTO(
     [property: JsonPropertyName("nome")] [property: Required] string Nome
 );
 
-public record TipoDeServicoDTO(
+public record TipoDeServicoResponseDTO(
     [property: JsonPropertyName("id")] [property: Required] int Id,
     [property: JsonPropertyName("nome")] [property: Required] string Nome,
     [property: JsonPropertyName("preco")] [property: Required] Decimal Preco
@@ -19,6 +19,6 @@ public record ServicoResponseDTO(
     [property: JsonPropertyName("carro_placa")] [property: Required] string PlacaVeiculo,
     [property: JsonPropertyName("nome_cliente")] [property: Required] string NomeCliente,
     [property: JsonPropertyName("data")] [property: Required] DateTime Data,
-    [property: JsonPropertyName("lista_servicos")] [property: Required] List<TipoDeServicoDTO> ListaServicos,
+    [property: JsonPropertyName("lista_servicos")] [property: Required] List<TipoDeServicoResponseDTO> ListaServicos,
     [property: JsonPropertyName("valor_total")]  [property: Required] Decimal ValorTotal
 );
