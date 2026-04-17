@@ -23,18 +23,15 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-
-
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-
-builder.Services.AddDbContext<AppDbContext>(opt => 
-    opt.UseNpgsql(connectionString));
+if (builder.Environment.EnvironmentName != "Testing")
+{
+    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+    builder.Services.AddDbContext<AppDbContext>(opt => 
+        opt.UseNpgsql(connectionString));
+}
 
 var app = builder.Build();
 
-// --- CONFIGURAÇÃO SWAGGER (Middleware) ---
-// No Docker, você pode querer habilitar o Swagger mesmo fora de "Development" 
-// para facilitar os testes iniciais. Se quiser apenas em Dev, use: if (app.Environment.IsDevelopment())
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
@@ -43,13 +40,17 @@ app.UseSwaggerUI(c =>
 });
 
 //app.UseCors("AllowAll");
-
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    db.Database.Migrate(); 
-    DbSeeder.Seed(db);
+    
+    if (db.Database.IsRelational())
+    {
+        db.Database.Migrate();
+    }
 }
 
 app.MapServicoEndpoints();
 app.Run();
+
+public partial class Program { }
