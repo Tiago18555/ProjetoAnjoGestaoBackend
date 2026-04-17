@@ -10,6 +10,11 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d oficina_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   anjogestaobackend:
     image: ${DOCKER_REGISTRY-}anjogestaobackend
@@ -18,13 +23,15 @@ services:
       dockerfile: Dockerfile
     environment:
       - ASPNETCORE_ENVIRONMENT=Docker
+      - DOTNET_ENVIRONMENT=Docker
       - ASPNETCORE_URLS=http://+:5000
     ports:
       - "8080:5000" # HTTP
     volumes:
       - ./:/home/app
     depends_on:
-      - database
+      database:
+        condition: service_healthy
 
 volumes:
   postgres_data:

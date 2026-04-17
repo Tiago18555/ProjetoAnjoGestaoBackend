@@ -19,10 +19,9 @@ COPY . .
 
 # RUN PUBLISH
 FROM build AS publish
-
-WORKDIR /app
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish /src/ProjetoAnjoGestaoBackend/ProjetoAnjoGestaoBackend.csproj -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
-COPY --from=build /src /src
+WORKDIR /src/ProjetoAnjoGestaoBackend
 
-ENTRYPOINT ["/bin/sh", "-c", "dotnet ProjetoAnjoGestaoBackend.dll"]
+RUN dotnet publish "ProjetoAnjoGestaoBackend.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+WORKDIR /app/publish
+ENTRYPOINT ["dotnet", "ProjetoAnjoGestaoBackend.dll"]

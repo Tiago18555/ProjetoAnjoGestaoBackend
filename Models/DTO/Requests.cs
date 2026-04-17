@@ -4,12 +4,12 @@ using System.Text.Json.Serialization;
 namespace ProjetoAnjoGestaoBackend.Models.DTO;
 
 public record ServicoDTO(
-    [property: JsonPropertyName("nome_loja")] [property: Required] string NomeLoja,
-    [property: JsonPropertyName("carro_modelo")] [property: Required] string ModeloCarro,
-    [property: JsonPropertyName("carro_placa")] [property: Required] string PlacaVeiculo,
+    [property: JsonPropertyName("modelo_carro")] [property: Required] string ModeloCarro,
     [property: JsonPropertyName("nome_cliente")] [property: Required] string NomeCliente,
-    [property: JsonPropertyName("lista_servicos")] [property: Required] List<TipoDeServicoDTO> ListaServicos,
-    [property: JsonPropertyName("valor_total")]  [property: Required] Decimal ValorTotal
+    [property: JsonPropertyName("nome_loja")] [property: Required] string NomeLoja,
+    [property: JsonPropertyName("placa_veiculo")] [property: Required] string PlacaVeiculo,
+    [property: JsonPropertyName("valor_total")]  [property: Required] Decimal ValorTotal,
+    [property: JsonPropertyName("lista_servicos")] [property: Required] List<TipoDeServicoDTO> ListaServicos
 );
 
 public record LojaDTO(

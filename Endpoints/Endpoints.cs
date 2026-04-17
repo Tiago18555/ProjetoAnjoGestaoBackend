@@ -80,12 +80,12 @@ public static class Endpoints {
         });
 
      
-        group.MapPost("/", async (ServicoDTO dto, AppDbContext db) =>
+        group.MapPost("/servicos", async (ServicoDTO dto, AppDbContext db) =>
         {
             var loja = await db.Lojas.FirstOrDefaultAsync(l => l.Nome == dto.NomeLoja) 
                     ?? new Loja { Nome = dto.NomeLoja };
 
-            var novosItens = dto.ListaServicos.Select(itemDto => new TipoDeServico
+            var novosItens = (dto.ListaServicos ?? new List<TipoDeServicoDTO>()).Select(itemDto => new TipoDeServico
             {
                 Nome = itemDto.Nome,
                 Preco = itemDto.Preco
