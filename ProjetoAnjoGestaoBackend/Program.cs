@@ -14,6 +14,7 @@ builder.Services.AddCors(options => {
             .AllowAnyMethod()
     );
 });
+
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new() { 
@@ -40,14 +41,14 @@ app.UseSwaggerUI(c =>
 });
 
 //app.UseCors("AllowAll");
-using (var scope = app.Services.CreateScope())
+
+if (builder.Environment.EnvironmentName != "Testing")
 {
-    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    
-    if (db.Database.IsRelational())
-    {
-        db.Database.Migrate();
-    }
+    using var scope = app.Services.CreateScope();
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();    
+    db.Database.Migrate();
+
+    DbSeeder.Seed(db);    
 }
 
 app.MapServicoEndpoints();
